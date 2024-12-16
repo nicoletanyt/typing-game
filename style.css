@@ -1,29 +1,107 @@
 html {
-    font-family: 'Courier New', Courier, monospace;
+    font-family: "Istok Web", sans-serif;
+    height: 100%;
 }
-#game-container {
+body {
     display: flex;
-    flex-direction: column;
-    height: 90vh;
     align-items: center;
     justify-content: center;
-    row-gap: 2em;
+    height: 100%;
+    margin: 0;
+}
+#outer-ipad {
+    background-color: black;
+    border-radius: 15px;
+    width: 740px;
+    height: 910px;
+    position: relative;
+}
+#inner-ipad {
+    width: 650px;
+    height: 730px;
+    margin: 90px 45px;
+    background-color: white;
+}
+.small-circle {
+    position: absolute;
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    background-color: white;
+    top: 37.5px;
+    left: calc(50% - 7.5px);
+}
+.big-circle {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    background-color: black;
+    border: 3px solid white;
+    box-sizing: border-box;
+    position: absolute;
+    bottom: 25px;
+    left: calc(50% - 20px);
 }
 #words-container {
-    border-bottom: 2px solid black;
-    height: 800px;
-    width: 700px;
+    /* border: 2px solid blue; */
+    width: auto;
+    height: 85%;
     position: relative;
+    box-sizing: border-box;
 }
 #words-container p {
     position: absolute;
-    font-weight: bold;
+    font-size: 1.8em;
+}
+#toolbar {
+    /* border: 2px solid red; */
+    box-sizing: border-box;
+    height: 15%;
+    width: auto;
+    display: flex;
+    justify-content: space-between;
+    padding: 1.5em;
+}
+.button {
+    border-radius: 50%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+}
+#question-button {
+    background-color: #E1E1E1;
+    opacity: 60%;
+    color: #383838;
+    width: 3em;
+    height: 3em;
+    align-self: center;
+    cursor: pointer;
+}
+#send-button {
+    background-color: #3B7CD7;
+    color: white;
+    position: absolute;
+    right: 0.5em;
+    width: 2.5em;
+    height: 2.5em;
+}
+.fa-solid {
     font-size: 1.5em;
 }
+#textfield {
+    display: flex;
+    align-items: center;
+    width: 90%;
+    position: relative;
+}
 #textfield input {
-    width: 50vw;
+    width: 100%;
+    height: 75%;
     font-size: 1.5em;
-    padding: 0.3em;
-    border: 2px solid black;
-    border-radius: 10px;
+    padding: 0.3em 2.5em 0.3em 0.8em;
+    border-radius: 12px;
+    background-color: #E1E1E1;
+    opacity: 60%;
+    border: none;
+    color: black;
 }

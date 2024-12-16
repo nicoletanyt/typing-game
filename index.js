@@ -22,18 +22,19 @@ class Word {
         WORD_CONTAINER.append(element);
         this.element = element;
 
-        console.log("added child");
+        console.log("Added Word");
     }
     spawnWord() {
         // generate initial position. use 690 to give some padding
-        this.position = [Math.round(Math.random() * (690 - this.element.clientWidth)), 0];
+        this.position = [Math.round(Math.random() * (647 - this.element.clientWidth)), -10];
         this.element.style.left = this.position[0] + "px";
     }
     checkGameOver() {
         // 776 = 800px - 1.5em (font size of p, where 1em = 16px)
-        if (this.position[1] > 776) {
+        if (this.position[1] > 590) {
             console.log("Game Over");
             gameOver();
+            return;
         }
     }
 }
@@ -91,27 +92,26 @@ function generateWords() {
 
 // game logic
 
+const gameLoop = setInterval(() => {
+	if (generatedWords.length > 0) {
+		let newWord = new Word(generatedWords[0]);
+		newWord.createElement();
+		newWord.spawnWord();
+
+		words.push(newWord);
+		generatedWords.shift();
+	}
+}, 2000);
+
+const updatePosition = setInterval(() => {
+	for (let i = 0; i < words.length; ++i) {
+		words[i].move();
+		words[i].checkGameOver();
+	}
+}, 500);
+
 function startGame() {
     generateWords()
-    
-    const gameLoop = setInterval(() => {
-        if (generatedWords.length > 0) {
-            let newWord = new Word(generatedWords[0]);
-            newWord.createElement();
-            newWord.spawnWord();
-    
-            words.push(newWord);
-            generatedWords.shift();
-        }
-    }, 2000);
-    
-    const updatePosition = setInterval(() => {
-        for (let i = 0; i < words.length; ++i) {
-            words[i].move()
-            words[i].checkGameOver();
-        }
-    }, 500);
-    
     textfield.addEventListener("keydown", (ev) => updateInput(ev));
 }
 

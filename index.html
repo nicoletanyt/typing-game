@@ -5,12 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Typing Game</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Icons -->
+    <script src="https://kit.fontawesome.com/056eae0c7b.js" crossorigin="anonymous"></script>
+    
+    <!-- Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Istok+Web:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
 </head>
 <body>
-    <div id="game-container">
-        <div id="words-container"></div>
-        <div id="textfield">
-            <input id="input" type="text" placeholder="Enter word..." autocomplete="off"/>
+    <div id="outer-ipad">
+        <div id="inner-ipad">
+            <div id="words-container"></div>
+            <div class="small-circle"></div>
+            <div id="toolbar">
+                <div id="question-button" class="button">
+                    <i class="fa-solid fa-question"></i>
+                </div>
+                <div id="textfield">
+                    <input id="input" type="text" placeholder="Enter..." autocomplete="off"/>
+                    <div id="send-button" class="button">
+                        <i class="fa-solid fa-arrow-up"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="big-circle"></div>
         </div>
     </div>
 
