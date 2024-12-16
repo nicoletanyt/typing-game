@@ -1,0 +1,29 @@
+html {
+    font-family: 'Courier New', Courier, monospace;
+}
+#game-container {
+    display: flex;
+    flex-direction: column;
+    height: 90vh;
+    align-items: center;
+    justify-content: center;
+    row-gap: 2em;
+}
+#words-container {
+    border-bottom: 2px solid black;
+    height: 800px;
+    width: 700px;
+    position: relative;
+}
+#words-container p {
+    position: absolute;
+    font-weight: bold;
+    font-size: 1.5em;
+}
+#textfield input {
+    width: 50vw;
+    font-size: 1.5em;
+    padding: 0.3em;
+    border: 2px solid black;
+    border-radius: 10px;
+}
