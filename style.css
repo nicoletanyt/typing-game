@@ -9,6 +9,16 @@ body {
     height: 100%;
     margin: 0;
 }
+h1 {
+    font-size: 3em;
+    font-weight: normal;
+    margin-bottom: 0;
+}
+p {
+    font-size: 1.2em;
+    font-weight: normal;
+}
+
 #outer-ipad {
     background-color: black;
     border-radius: 15px;
@@ -100,8 +110,58 @@ body {
     font-size: 1.5em;
     padding: 0.3em 2.5em 0.3em 0.8em;
     border-radius: 12px;
-    background-color: #E1E1E1;
-    opacity: 60%;
+    background-color: rgba(225, 225, 225, .6);
     border: none;
-    color: black;
+}
+.show {
+    visibility: visible;
+}
+.hidden {
+    display: none;
+}
+#text-container {
+    text-align: center;
+    padding: 2em;
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-bottom: 0;
+    align-items: center;
+}
+#top-scores-container {
+    height: 40%;
+    width: 70%;
+    background-color: rgba(225, 225, 225, .6);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    padding: 1em 2em;
+}
+.top-score-heading {
+    text-decoration: underline;
+}
+.score-item {
+    display: grid;
+    grid-template-columns: repeat(3, 33%)
+}
+.align-left {
+    text-align: left;
+}
+#play-again-button {
+    background-color: #3B7CD7;
+    border-radius: 15px;
+    width: 258px;
+    cursor: pointer;
+    color: white;
+}
+#play-again-button p {
+    /* font-weight: bold; */
+    font-style: italic;
+}
+#instructions-container {
+    padding: 2em;
+    height: 85%;
+    box-sizing: border-box;
+    /* text-align: center; */
 }

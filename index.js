@@ -7,19 +7,19 @@ class Word {
 
     move() {
         // move downwards 
-        this.position[1] = this.position[1] + 50
+        this.position[1] = this.position[1] + 40
         this.element.style.top = this.position[1] + "px"
     }
     removeWord() {
         // remove element from game container
-        WORD_CONTAINER.removeChild(this.element)
+        wordContainer.removeChild(this.element);
     }
     createElement() {
         // create element
         let element = document.createElement("p");
         element.innerHTML = this.word;
 
-        WORD_CONTAINER.append(element);
+        wordContainer.append(element);
         this.element = element;
 
         console.log("Added Word");
@@ -34,7 +34,6 @@ class Word {
         if (this.position[1] > 590) {
             console.log("Game Over");
             gameOver();
-            return;
         }
     }
 }
@@ -42,8 +41,24 @@ class Word {
 let words = []
 let generatedWords = []
 let currentInput = ""
-const WORD_CONTAINER = document.getElementById("words-container")
+let time = 0
+let score = 0
+let topScores = []
+let gameRunning = true
+
+// HTML Elements
+const wordContainer = document.getElementById("words-container")
+const questionBtn = document.getElementById("question-button");
+const playAgainBtn = document.getElementById("play-again-button");
 let textfield = document.getElementById("input")
+const scoresContainer = document.getElementById("scores");
+const scoreLabel = document.getElementById("score-display");
+
+// Screens
+const gameScreen = document.getElementById("game-screen");
+const gameOverScreen = document.getElementById("game-over-screen");
+const gameContainer = document.getElementById("game-container");
+const instructionScreen = document.getElementById("instructions-screen");
 
 async function getData() {
     const url = "https://random-word-api.herokuapp.com/word?length=6&number=20";
@@ -62,21 +77,37 @@ async function getData() {
 
 function gameOver() {
     // remove intervals
-    clearInterval(gameLoop);
-    clearInterval(updatePosition);
-    alert("Game Over");
+    gameRunning = false
+    // clearInterval(gameLoop);
+    // clearInterval(updatePosition);
+
+    toggleGameOver();
+    addScore(score, time);
 }
 
 function updateInput(event) {
     if (event.key == "Enter") {
         // check if can remove the most recent word
-        if (textfield.value.toLowerCase() == words[0].word) {
-            // remove the most recent word
-            let removed = words.shift()
-            removed.removeWord()
-            textfield.value = ""
+        if (words.length == 0) {
+            if (textfield.value.toLowerCase() == "/start") {
+                // start the game
+                console.log("Start Game")
+                if (instructionScreen.classList.contains("show")) toggleInstructions()
+                startGame()
+                textfield.value = "";
+            } else {
+                textfield.style.color = "red";
+            }
         } else {
-            textfield.style.color = "red"
+            if (textfield.value.toLowerCase() == words[0].word) {
+                // remove the most recent word
+                let removed = words.shift();
+                removed.removeWord();
+                textfield.value = "";
+                score += 1
+            } else {
+                textfield.style.color = "red";
+            }
         }
     } else {
         textfield.style.color = "black";
@@ -93,26 +124,140 @@ function generateWords() {
 // game logic
 
 const gameLoop = setInterval(() => {
-	if (generatedWords.length > 0) {
-		let newWord = new Word(generatedWords[0]);
-		newWord.createElement();
-		newWord.spawnWord();
-
-		words.push(newWord);
-		generatedWords.shift();
-	}
+    if (gameRunning) {
+        if (generatedWords.length > 0) {
+            let newWord = new Word(generatedWords[0]);
+            newWord.createElement();
+            newWord.spawnWord();
+    
+            words.push(newWord);
+            generatedWords.shift();
+            time += 2
+        }
+    }
 }, 2000);
 
 const updatePosition = setInterval(() => {
-	for (let i = 0; i < words.length; ++i) {
-		words[i].move();
-		words[i].checkGameOver();
-	}
+    if (gameRunning) {
+        for (let i = 0; i < words.length; ++i) {
+            words[i].move();
+            words[i].checkGameOver();
+        }
+    }
 }, 500);
 
-function startGame() {
-    generateWords()
-    textfield.addEventListener("keydown", (ev) => updateInput(ev));
+function toggleInstructions() {
+    if (instructionScreen.classList.contains("show")) {
+        instructionScreen.classList.add("hidden")
+        instructionScreen.classList.remove("show");
+
+        gameContainer.classList.remove("hidden")
+        gameContainer.classList.add("show");
+    } else {
+        instructionScreen.classList.add("show");
+        instructionScreen.classList.remove("hidden");
+        
+        gameContainer.classList.remove("show");
+        gameContainer.classList.add("hidden");
+    }
 }
 
-startGame()
+function toggleGameOver() {
+	if (gameScreen.classList.contains("show")) {
+		gameScreen.classList.add("hidden");
+		gameScreen.classList.remove("show");
+
+		gameOverScreen.classList.add("show");
+		gameOverScreen.classList.remove("hidden");
+	} else {
+		gameScreen.classList.add("show");
+		gameScreen.classList.remove("hidden");
+
+		gameOverScreen.classList.add("hidden");
+		gameOverScreen.classList.remove("show");
+
+		// close instructions screen
+		if (instructionScreen.classList.contains("show")) toggleInstructions();
+	}
+}
+
+function addScore(score, time) {
+
+    // display score
+    scoreLabel.innerText =
+			"Words Typed: " +
+			score +
+			"\n" +
+			"Typing Speed: " +
+			Math.round(score / (time / 60)) +
+			" WPM (words per minute)";
+
+    topScores.push([score, Math.round(score / (time / 60))]);
+    console.log("Added new score")
+
+    topScores
+			.sort(function (a, b) {
+				return a[0] - b[0];
+			})
+			.reverse();
+
+    if (topScores.length > 3) {
+        // remove fourth element
+        topScores.pop()
+    }
+
+    if (scoresContainer.children.length != 3) {
+        // add new entries
+        const wrapper = document.createElement("li");
+        const scoreItem = document.createElement("div");
+        scoreItem.classList.add("score-item");
+
+        const wordsLabel = document.createElement("p");
+        wordsLabel.classList.add("align-left");
+        scoreItem.appendChild(wordsLabel);
+
+        const divider = document.createElement("p");
+        divider.innerText = "//";
+        scoreItem.appendChild(divider);
+
+        const wpmLabel = document.createElement("p");
+        wpmLabel.classList.add("align-right")
+        scoreItem.appendChild(wpmLabel)
+
+        wrapper.appendChild(scoreItem);
+        scoresContainer.appendChild(wrapper)
+    }
+    
+    // update scoreboard
+    for (let i = 0; i < topScores.length; ++i) {
+        let scoreLabel = scoresContainer.children[i].children[0].children[0]
+        let wpmLabel = scoresContainer.children[i].children[0].children[2];
+        scoreLabel.textContent = topScores[i][0] + " Words"
+        wpmLabel.textContent = Math.round(topScores[i][1]) + " WPM";
+    }
+}
+
+function playAgain() {
+	// remove children
+	for (let i = 0; i < words.length; i++) {
+		words[i].removeWord();
+	}
+
+	words = [];
+	generatedWords = [];
+	currentInput = "";
+    time = 0;
+    score = 0;
+    
+    toggleGameOver()
+}
+
+function startGame() {
+    gameRunning = true;
+
+    generateWords()
+}
+
+textfield.addEventListener("keydown", (ev) => updateInput(ev));
+questionBtn.addEventListener("click", () => toggleInstructions())
+playAgainBtn.addEventListener("click", () => playAgain());
