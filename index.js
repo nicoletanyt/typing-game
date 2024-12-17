@@ -41,7 +41,6 @@ class Word {
 
 let words = []
 let generatedWords = []
-let currentInput = ""
 let time = 0
 let score = 0
 let topScores = []
@@ -217,6 +216,11 @@ function addScore(score, time) {
             wpm +
             " WPM (words per minute)";
 
+    // get topScores from local storage
+    if (localStorage.getItem("topScores") != null) {
+        topScores = JSON.parse(localStorage.getItem("topScores"));
+    }
+
     topScores.push([score, wpm]);
     console.log("Added new score")
 
@@ -231,7 +235,12 @@ function addScore(score, time) {
         topScores.pop()
     }
 
-    if (scoresContainer.children.length != 3) {
+    // update local storage
+    localStorage.setItem("topScores", JSON.stringify(topScores))
+
+    let n = topScores.length - scoresContainer.children.length;
+
+    for (let i = 0; i < n; ++i) {
         // add new entries
         const wrapper = document.createElement("li");
         const scoreItem = document.createElement("div");
@@ -270,9 +279,12 @@ function playAgain() {
 
 	words = [];
 	generatedWords = [];
-	currentInput = "";
+	
     time = 0;
     score = 0;
+    textfield.value = "";
+    fallInterval = 2000;
+    level = 1;
     
     toggleGameOver()
 }
