@@ -1,13 +1,14 @@
 class Word {
-    constructor(word) {
+    constructor(word, speed) {
         this.word = word;
         this.position;
         this.element;
+        this.speed = speed;
     }
 
     move() {
         // move downwards 
-        this.position[1] = this.position[1] + 40
+        this.position[1] = this.position[1] + this.speed
         this.element.style.top = this.position[1] + "px"
     }
     removeWord() {
@@ -44,7 +45,9 @@ let currentInput = ""
 let time = 0
 let score = 0
 let topScores = []
-let gameRunning = true
+let gameRunning = false
+let fallInterval = 2000
+let level = 1
 
 // HTML Elements
 const wordContainer = document.getElementById("words-container")
@@ -78,8 +81,6 @@ async function getData() {
 function gameOver() {
     // remove intervals
     gameRunning = false
-    // clearInterval(gameLoop);
-    // clearInterval(updatePosition);
 
     toggleGameOver();
     addScore(score, time);
@@ -117,25 +118,44 @@ function updateInput(event) {
 function generateWords() {
     getData().then((res) => {
         generatedWords = res
-        console.log(generatedWords)
     });
 }
 
 // game logic
 
 const gameLoop = setInterval(() => {
-    if (gameRunning) {
-        if (generatedWords.length > 0) {
-            let newWord = new Word(generatedWords[0]);
-            newWord.createElement();
-            newWord.spawnWord();
-    
-            words.push(newWord);
-            generatedWords.shift();
-            time += 2
-        }
+	if (gameRunning) {
+		if (generatedWords.length > 0) {
+			let newWord = new Word(generatedWords[0], (level * 20) + 40);
+			newWord.createElement();
+			newWord.spawnWord();
+
+			words.push(newWord);
+			generatedWords.shift();
+            
+            if (fallInterval >= 1000) {
+                fallInterval -= (100 * level)
+            }
+
+            // adjust levels 
+            if (score % 5 == 0) {
+                level += 1
+            }
+            
+            // generate new words
+            if (generatedWords.length == 2) {
+                generateWords()
+            }
+		}
+	}
+}, fallInterval);
+
+const timer = setInterval(() => {
+    // count time spent typing (exclude waiting for word to fall)
+    if (gameRunning && textfield.value != "") {
+        time += 1
     }
-}, 2000);
+}, 1000)
 
 const updatePosition = setInterval(() => {
     if (gameRunning) {
@@ -183,16 +203,21 @@ function toggleGameOver() {
 
 function addScore(score, time) {
 
+    let wpm = Math.round(score / (time / 60));
+
+    if (score == 0 && time == 0) {
+        wpm = 0
+    } 
     // display score
     scoreLabel.innerText =
-			"Words Typed: " +
-			score +
-			"\n" +
-			"Typing Speed: " +
-			Math.round(score / (time / 60)) +
-			" WPM (words per minute)";
+            "Words Typed: " +
+            score +
+            "\n" +
+            "Typing Speed: " +
+            wpm +
+            " WPM (words per minute)";
 
-    topScores.push([score, Math.round(score / (time / 60))]);
+    topScores.push([score, wpm]);
     console.log("Added new score")
 
     topScores
